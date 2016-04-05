@@ -12,6 +12,21 @@
     "test": "istanbul cover _mocha -- test --require test/setup.js --recursive --timeout 30000",
     "test:raw": "mocha test --require test/setup.js --recursive --timeout 30000"
   },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "eslint": "^1.9.0",
+    "eslint-config-lob": "^2.0.0",
+    "generate-changelog": "^1.0.0",
+    "hapi": "^13.3.0",
+    "inject-then": "^2.0.5",
+    "istanbul": "^0.4.2",
+    "joi": "^8.0.5",
+    "mocha": "^2.2.5",
+    "sinon": "^1.17.3"
+  },
+  "peerDependencies": {
+    "hapi": ">= 10.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lob/hapi-format-error.git"
@@ -27,13 +42,5 @@
   "bugs": {
     "url": "https://github.com/lob/hapi-format-error/issues"
   },
-  "homepage": "https://github.com/lob/hapi-format-error#readme",
-  "devDependencies": {
-    "eslint": "^1.9.0",
-    "eslint-config-lob": "^2.0.0",
-    "generate-changelog": "^1.0.0",
-    "chai": "^3.0.0",
-    "istanbul": "^0.4.2",
-    "mocha": "^2.2.5"
-  }
+  "homepage": "https://github.com/lob/hapi-format-error#readme"
 }
