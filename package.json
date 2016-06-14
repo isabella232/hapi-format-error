@@ -1,6 +1,6 @@
 {
   "name": "hapi-format-error",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Structure Boom errors into a more desirable format",
   "main": "lib/index.js",
   "scripts": {
