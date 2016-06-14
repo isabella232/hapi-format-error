@@ -45,6 +45,35 @@ describe('format error plugin', () => {
       config: {
         handler: (request, reply) => reply(new Error())
       }
+    }, {
+      method: 'POST',
+      path: '/xor',
+      config: {
+        handler: (request, reply) => reply({}),
+        validate: {
+          payload: Joi.object().keys({
+            one: Joi.string(),
+            two: Joi.string()
+          })
+          .xor('one', 'two')
+        }
+      }
+    }, {
+      method: 'POST',
+      path: '/nested_xor',
+      config: {
+        handler: (request, reply) => reply({}),
+        validate: {
+          payload: {
+            test: Joi.object().keys({
+              one: Joi.string(),
+              two: Joi.string()
+            })
+            .xor('one', 'two')
+            .required()
+          }
+        }
+      }
     }]);
   });
 
@@ -209,6 +238,70 @@ describe('format error plugin', () => {
     })
     .then(() => {
       expect(Util.log.called).to.be.false;
+    });
+  });
+
+  it('formats xor errors missing both parameters', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/xor',
+      payload: {}
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('one or two is required');
+    });
+  });
+
+  it('formats xor errors containing both parameters', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/xor',
+      payload: { one: 'banana', two: 'strawberry' }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('either one or two is required, but not both');
+    });
+  });
+
+  it('formats nested xor errors missing both parameters', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/nested_xor',
+      payload: { test: {} }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('test.one or test.two is required');
+    });
+  });
+
+  it('formats xor errors containing both parameters', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/nested_xor',
+      payload: { test: { one: 'banana', two: 'strawberry' } }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('either test.one or test.two is required, but not both');
     });
   });
 
