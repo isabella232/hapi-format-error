@@ -1,3 +1,13 @@
+### 1.1.0 (2016-6-14)
+
+##### Chores
+
+* **deps:** upgrade eslint-config-lob to 2.0.1 ([b285365e](https://github.com/lob/hapi-format-error/commit/b285365e5d76b91a5d9cf5892aadad8914bc920a))
+
+##### New Features
+
+* **xor:** adds special support for xor errors ([540e96ce](https://github.com/lob/hapi-format-error/commit/540e96ce127d2024452f796b159985e68a633b92))
+
 ## 1.0.0 (2016-4-11)
 
 ##### Chores
