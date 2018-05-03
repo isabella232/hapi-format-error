@@ -17,7 +17,7 @@ describe('format error plugin', () => {
     server = new Hapi.Server();
     server.connection({ port: 80 });
 
-    server.register([require('inject-then')], () => {})
+    server.register([require('inject-then')], () => {});
 
     server.route([{
       method: 'GET',
@@ -72,6 +72,15 @@ describe('format error plugin', () => {
             .xor('one', 'two')
             .required()
           }
+        }
+      }
+    }, {
+      method: 'POST',
+      path: '/no-params',
+      config: {
+        handler: (request, reply) => reply({}),
+        validate: {
+          payload: Joi.object().keys({})
         }
       }
     }]);
@@ -303,6 +312,68 @@ describe('format error plugin', () => {
     .then((res) => {
       expect(res.result.error.message).to.eql('either test.one or test.two is required, but not both');
     });
+  });
+
+  it('formats a single extraneous field correctly', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/no-params',
+      payload: {
+        bar: false
+      }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('bar is not allowed');
+    });
+  });
+
+  it('formats multiple extraneous fields correctly', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/no-params',
+      payload: {
+        foo: true,
+        bar: false
+      }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('the following parameters are not allowed: foo, bar');
+    });
+  });
+
+  it('can override the language', () => {
+    server.register({
+      register: FormatError,
+      options: {
+        language: {
+          object: {
+            allowUnknown: { singular: 'blarf' }
+          }
+        }
+      }
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/no-params',
+      payload: {
+        bar: false
+      }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('blarf');
+    });
+
   });
 
 });

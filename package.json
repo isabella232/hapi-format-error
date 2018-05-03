@@ -42,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/lob/hapi-format-error/issues"
   },
-  "homepage": "https://github.com/lob/hapi-format-error#readme"
+  "homepage": "https://github.com/lob/hapi-format-error#readme",
+  "dependencies": {
+    "hoek": "^4.2.1"
+  }
 }
