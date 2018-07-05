@@ -17,15 +17,16 @@
     "eslint": "^1.9.0",
     "eslint-config-lob": "^2.0.1",
     "generate-changelog": "^1.0.0",
-    "hapi": "^13.3.0",
+    "hapi": "^16.1.0",
     "inject-then": "^2.0.5",
     "istanbul": "^0.4.2",
-    "joi": "^8.0.5",
+    "joi": "^11.4.0",
     "mocha": "^2.2.5",
     "sinon": "^1.17.3"
   },
   "peerDependencies": {
-    "hapi": ">= 10.0.0"
+    "joi": ">= 10.0.0",
+    "hapi": ">= 16.0.0"
   },
   "repository": {
     "type": "git",
