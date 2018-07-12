@@ -76,6 +76,20 @@ describe('format error plugin', () => {
       }
     }, {
       method: 'POST',
+      path: '/nested_paths',
+      config: {
+        handler: (request, reply) => reply({}),
+        validate: {
+          payload: {
+            test: Joi.object().keys({
+              one: Joi.string().valid('one', '1'),
+              two: Joi.string().valid('two')
+            })
+          }
+        }
+      }
+    }, {
+      method: 'POST',
       path: '/no-params',
       config: {
         handler: (request, reply) => reply({}),
@@ -373,7 +387,48 @@ describe('format error plugin', () => {
     .then((res) => {
       expect(res.result.error.message).to.eql('blarf');
     });
+  });
 
+  it('formats nested paths correctly', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/nested_paths',
+      payload: {
+        test: {
+          one: 'two',
+          two: 'two'
+        }
+      }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('test.one must be one of [one, 1]');
+    });
+  });
+
+  it('formats multiple nested extraneous fields correctly', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'POST',
+      url: '/nested_paths',
+      payload: {
+        test: {
+          foo: true,
+          bar: false
+        }
+      }
+    })
+    .then((res) => {
+      expect(res.result.error.message).to.eql('the following parameters are not allowed: test.foo, test.bar');
+    });
   });
 
 });
