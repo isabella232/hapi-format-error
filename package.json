@@ -45,6 +45,10 @@
   },
   "homepage": "https://github.com/lob/hapi-format-error#readme",
   "dependencies": {
+    "decamelize": "^4.0.0",
     "hoek": "^4.2.1"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }

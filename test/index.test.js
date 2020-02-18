@@ -7,6 +7,20 @@ const Util  = require('util');
 
 const FormatError = require('../lib');
 
+class UnauthorizedUser extends Error {
+  constructor (message) {
+    super(message);
+    this.name = 'UnauthorizedUser';
+  }
+}
+
+class MalformedError extends Error {
+  constructor (message) {
+    super(message);
+    this.name = undefined;
+  }
+}
+
 describe('format error plugin', () => {
 
   let server;
@@ -44,6 +58,18 @@ describe('format error plugin', () => {
       path: '/error',
       config: {
         handler: (request, reply) => reply(new Error())
+      }
+    }, {
+      method: 'GET',
+      path: '/unauth',
+      config: {
+        handler: (request, reply) => reply(new UnauthorizedUser('who even are you'))
+      }
+    }, {
+      method: 'GET',
+      path: '/malformed-error',
+      config: {
+        handler: (request, reply) => reply(new MalformedError('no .name property'))
       }
     }, {
       method: 'POST',
@@ -407,6 +433,78 @@ describe('format error plugin', () => {
     })
     .then((res) => {
       expect(res.result.error.message).to.eql('test.one must be one of [one, 1]');
+    });
+  });
+
+  it('does not include type when permeate is false', () => {
+    server.register({
+      register: FormatError,
+      options: {}
+    });
+
+    return server.injectThen({
+      method: 'GET',
+      url: '/unauth',
+      payload: {}
+    })
+    .then((res) => {
+      expect(res.result.error.type).to.be.undefined;
+    });
+  });
+
+  it('does include type when permeate is true', () => {
+    server.register({
+      register: FormatError,
+      options: {
+        permeateErrorName: true
+      }
+    });
+
+    return server.injectThen({
+      method: 'GET',
+      url: '/unauth',
+      payload: {}
+    })
+    .then((res) => {
+      expect(res.result.error.type).to.eql('UnauthorizedUser');
+    });
+  });
+
+  it('decamelizes error type', () => {
+    server.register({
+      register: FormatError,
+      options: {
+        permeateErrorName: true,
+        decamelizeErrorName: true
+      }
+    });
+
+    return server.injectThen({
+      method: 'GET',
+      url: '/unauth',
+      payload: {}
+    })
+    .then((res) => {
+      expect(res.result.error.type).to.eql('unauthorized_user');
+    });
+  });
+
+  it('handles malformed Errors', () => {
+    server.register({
+      register: FormatError,
+      options: {
+        permeateErrorName: true,
+        decamelizeErrorName: true
+      }
+    });
+
+    return server.injectThen({
+      method: 'GET',
+      url: '/malformed-error',
+      payload: {}
+    })
+    .then((res) => {
+      expect(res.result.error.type).to.be.undefined;
     });
   });
 
