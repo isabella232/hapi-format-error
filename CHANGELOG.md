@@ -1,3 +1,13 @@
+## 3.0.0 (2020-02-19)
+
+##### Chores
+
+* **deps:**  bump handlebars from 4.0.11 to 4.1.2 ([2b242a63](https://github.com/lob/hapi-format-error/commit/2b242a63f6686067d25464de6cc2644fa812476e))
+
+##### New Features
+
+* **type:**  optionally provide error type in response ([132418c4](https://github.com/lob/hapi-format-error/commit/132418c4b7bb36491e8bd9b72c3ef19c7bb8da24))
+
 ### 2.1.0 (2018-07-12)
 
 ## 2.0.0 (2018-07-05)
