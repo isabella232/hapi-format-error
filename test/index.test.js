@@ -11,13 +11,7 @@ class UnauthorizedUser extends Error {
   constructor (message) {
     super(message);
     this.name = 'UnauthorizedUser';
-  }
-}
-
-class MalformedError extends Error {
-  constructor (message) {
-    super(message);
-    this.name = undefined;
+    this.code = 'unauthorized';
   }
 }
 
@@ -64,12 +58,6 @@ describe('format error plugin', () => {
       path: '/unauth',
       config: {
         handler: (request, reply) => reply(new UnauthorizedUser('who even are you'))
-      }
-    }, {
-      method: 'GET',
-      path: '/malformed-error',
-      config: {
-        handler: (request, reply) => reply(new MalformedError('no .name property'))
       }
     }, {
       method: 'POST',
@@ -436,7 +424,7 @@ describe('format error plugin', () => {
     });
   });
 
-  it('does not include type when permeate is false', () => {
+  it('does not include code when permeate is false', () => {
     server.register({
       register: FormatError,
       options: {}
@@ -448,15 +436,15 @@ describe('format error plugin', () => {
       payload: {}
     })
     .then((res) => {
-      expect(res.result.error.type).to.be.undefined;
+      expect(res.result.error.code).to.be.undefined;
     });
   });
 
-  it('does include type when permeate is true', () => {
+  it('does include code when permeate is true', () => {
     server.register({
       register: FormatError,
       options: {
-        permeateErrorName: true
+        permeateErrorCode: true
       }
     });
 
@@ -466,45 +454,25 @@ describe('format error plugin', () => {
       payload: {}
     })
     .then((res) => {
-      expect(res.result.error.type).to.eql('UnauthorizedUser');
+      expect(res.result.error.code).to.eql(new UnauthorizedUser().code);
     });
   });
 
-  it('decamelizes error type', () => {
+  it('does not include code when permeate is true and code is not present', () => {
     server.register({
       register: FormatError,
       options: {
-        permeateErrorName: true,
-        decamelizeErrorName: true
+        permeateErrorCode: true
       }
     });
 
     return server.injectThen({
       method: 'GET',
-      url: '/unauth',
+      url: '/error',
       payload: {}
     })
     .then((res) => {
-      expect(res.result.error.type).to.eql('unauthorized_user');
-    });
-  });
-
-  it('handles malformed Errors', () => {
-    server.register({
-      register: FormatError,
-      options: {
-        permeateErrorName: true,
-        decamelizeErrorName: true
-      }
-    });
-
-    return server.injectThen({
-      method: 'GET',
-      url: '/malformed-error',
-      payload: {}
-    })
-    .then((res) => {
-      expect(res.result.error.type).to.be.undefined;
+      expect(res.result.error.code).to.not.exist;
     });
   });
 
