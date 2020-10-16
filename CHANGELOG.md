@@ -1,3 +1,11 @@
+## 4.0.0 (2020-10-16)
+
+##### New Features
+
+* **codes:**
+  *  surface error codes ([02d97e80](https://github.com/lob/hapi-format-error/commit/02d97e804dfa258ffaf3911845f9351176a0af03))
+  *  surface error codes ([751a8806](https://github.com/lob/hapi-format-error/commit/751a8806ed4d90f5c0f3473becbae90b771e91cb))
+
 ## 3.0.0 (2020-02-19)
 
 ##### Chores
