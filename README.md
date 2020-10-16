@@ -28,37 +28,22 @@ It currently does the following:
 * `serverErrorMessage`: string - any custom message you want to return for server errors
 * `joiStatusCode`: integer - the status code to use instead of `400` for Joi validation errors
 * `language`: object - language templates used to format specific errors; see below for details
-* `permeateErrorName`: boolean, default `false` - whether to copy the `.name` property from the Boom Error to a `type` property in the API response
-* `decamelizeErrorName`: boolean, default `false` - whether to decamelize the `type`, such as `UnauthorizedUser` to `unauthorized_user`
+* `permeateErrorCode`: boolean, default `false` - whether to surface the `.code` property from the Boom Error in the API response
 
 ### Providing Error Details
 
 Additional error details can optionally be provided in the response object. This allows a client to make decisions based on granular error messages without having to parse the human-readable `message` field.
 
-#### Set `permeateErrorName: true`
+#### Set `permeateErrorCode: true`
 
-This will use the `.name` property from the Boom Error as a new `.type` property in the response object. This is useful for subclassing and naming Errors and exposing the values to the client. For example, if an error named `UnauthorizedUser` is used as a response, the HTTP response will look like the following:
-
-```json
-{
-  "error": {
-    "message": "error message",
-    "status_code": 400,
-    "type": "UnauthorizedUser"
-  }
-}
-```
-
-#### Set `permeateErrorName: true` and `decamelizeErrorName: true`
-
-This will still consider the `.name` property from the Boom Error, but the value will be _decamelized_. For example, if an error named `UnauthorizedUser` is used as a response, the HTTP response will look like the following:
+This will add the `.code` property from the Boom Error to the response object. The HTTP response will look like the following:
 
 ```json
 {
   "error": {
     "message": "error message",
     "status_code": 400,
-    "type": "unauthorized_user"
+    "code": "unauthorized"
   }
 }
 ```
